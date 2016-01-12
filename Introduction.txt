@@ -1,0 +1,82 @@
+--- Start service
+mongod.exe --dbpath "D:\Program Files\MongoDB\Server\3.0\bin\db "
+
+--- Import
+mongoimport.exe --jsonArray --db test --collection bank_data < "D:\Program Files\MongoDB\Server\3.0\bin\mongodb-mva-master\module2_getting_started\bank_data.json"
+
+--- DB commands
+Mongo.exe
+
+--- Structure
+document	=> row
+collection	=> table
+
+
+--- Show collections
+show collections
+db.bank_data.count()
+db.bank_data.findOne()																=> just want to see one document from a collection
+db.bank_data.find({ "_id" : ObjectId("565718535f3e32867e01c7b6")})
+db.bank_data.find({ "_id" : ObjectId("565718535f3e32867e01c7b6")}).count()
+db.bank_data.find({ "first_name" : "JAMES"})
+db.bank_data.find()[6]
+db.bank_data.find({ "last_name" : "MARTINEZ"}, { first_name: 1, last_name: 1})[12]
+db.bank_data.find({ "last_name" : "MARTINEZ"}, { accounts: 1})[12]
+db.bank_data.find({ $or: [{ last_name: 'SMITH'},{last_name: 'MARTINEZ'}]})
+
+--- Show databases
+show dbs
+
+--- Use database & get current db
+use dbname
+db 
+
+--- Create collection & document
+post = {"title" : "My Blog Post", "content" : "Here's my blog post.", "date" : new Date()}
+db.blog.insert(post)
+db.blog.find({"title" : "My Blog Post"})
+db.blog.findOne({"_id" : ObjectId("5037ee4a1084eb3ffeef7228"),"title" : "My Blog Post","content" : "Here's my blog post.","date" : ISODate("2012-08-24T21:12:09.982Z")})
+
+-- Insert
+db.foo.insert({"bar" : "baz"})
+
+-- BSON size (in bytes)
+x=db.foo.find({"bar" : "baz"})
+Object.bsonsize(x)
+
+-- Update
+post.comments = []
+db.blog.update({title : "My Blog Post"}, post)
+
+-- Delete
+db.blog.remove({title : "My Blog Post"})
+db.foo.remove()		=> remove all documents
+
+-- Basic Data Types
+null
+	{"x" : null}
+boolean
+	{"x" : true}
+number
+	{"x" : 3.14} or {"x" : 3}
+Integers, use the NumberInt or NumberLong classes, which represent 4-byte or 8-byte signed integers
+	{"x" : NumberInt("3")}
+	{"x" : NumberLong("3")}
+string
+	{"x" : "foobar"}
+date => Dates are stored as milliseconds since the epoch. The time zone is not stored:
+	{"x" : new Date()}
+regular expression	=> Queries can use regular expressions using JavaScript’s regular expression syntax:
+	{"x" : /foobar/i}
+array
+	{"x" : ["a", "b", "c"]}
+embedded document	=> Documents can contain entire documents embedded as values in a parent document:
+	{"x" : {"foo" : "bar"}}
+object id	=> An object id is a 12-byte ID for documents. See the section “_id and ObjectIds”
+	{"x" : ObjectId()}
+binary data
+	Binary data is a string of arbitrary bytes. It cannot be manipulated from the shell.
+	Binary data is the only way to save non-UTF-8 strings to the database.
+code
+	Queries and documents can also contain arbitrary JavaScript code:
+	{"x" : function() { /* ... */ }}
